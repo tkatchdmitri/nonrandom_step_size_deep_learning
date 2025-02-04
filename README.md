@@ -4,6 +4,10 @@ What if the step size in deep learning wasn't random? What if, as usual, you too
 
 That's exactly what we did. And it works.
 
+![Tangent_to_a_curve svg](https://github.com/user-attachments/assets/479524b1-e077-444e-8238-b29e7c77f88e)
+
+![redline_vs_adamw](https://github.com/user-attachments/assets/82854f8e-48f2-4a11-acd9-73854f48547a)
+
 
 ## nanoGPT
 

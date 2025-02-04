@@ -32,6 +32,7 @@ from model import GPTConfig, GPT
 # -----------------------------------------------------------------------------
 # default config values designed to train a gpt2 (124M) on OpenWebText
 # I/O
+# torch.set_default_dtype(torch.float64)
 out_dir = 'out'
 eval_interval = 2000
 log_interval = 1
@@ -303,13 +304,49 @@ while True:
         X, Y = get_batch('train')
         # backward pass, with gradient scaling if training in fp16
         scaler.scale(loss).backward()
-    # clip the gradient
-    if grad_clip != 0.0:
-        scaler.unscale_(optimizer)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
+    # for name, param in model.named_parameters():
+    #     if param.requires_grad: 
+    #         param.value = ( param.grad * param.value - loss ) / param.grad
+    # # clip the gradient
+    # if grad_clip != 0.0:
+    #     scaler.unscale_(optimizer)
+    #     torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)    
+    alpha = 1 / 20000000.0
+    with torch.no_grad():
+        for param in model.parameters():
+            # param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * (loss - param.grad * param.data) * param.grad / ( torch.norm(param.grad) ** 2 ), param.data)
+            # param.data = (loss - param.grad * param.data) * param.grad / ( torch.norm(param.grad) ** 2 )
+            param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), param.data)
+            # A = param.grad
+            # B = loss - param.grad * param.data
+            # print('A', A.shape)
+            # print('B', B.shape)
+            # if len(param.data.shape) == 1:
+            #     pass
+            # else:
+            #     # print('param.data.shape', param.data.shape)
+            #     # solution, resduals, rank, singular_values = torch.linalg.lstsq(A, B, rcond=None, driver='gels')
+            #     # print('solution', solution.shape)
+            #     # print('residuals', residuals.shape)
+            #     # print('rank', rank.shape)
+            #     # print('singular_values', singular_values.shape)
+            #     # param.data = soln
+            #     # param.data = torch.linalg.lstsq(A, B, rcond=min(param.data.shape), driver=None).residuals.reshape(param.data.shape)
+            #     # X, _ = torch.lstsq(B, A)
+            #     print('param.data', param.data.shape)
+            #     print('param.grad', param.grad.shape)
+            #     print('lstsq_s', torch.linalg.lstsq(A, B).solution.shape)
+            #     print('lstsq_r', torch.linalg.lstsq(A, B).residuals.shape)
+            #     assert param.data.shape == torch.linalg.lstsq(A, B).solution.shape
+            #     param.data = torch.linalg.lstsq(A, B).solution
+
+    # # clip the gradient
+    # if grad_clip != 0.0:
+    #     scaler.unscale_(optimizer)
+    #     torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
     # step the optimizer and scaler if training in fp16
-    scaler.step(optimizer)
-    scaler.update()
+    # scaler.step(optimizer)
+    # scaler.update()
     # flush the gradients as soon as we can, no need for this memory anymore
     optimizer.zero_grad(set_to_none=True)
 

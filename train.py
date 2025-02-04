@@ -311,7 +311,7 @@ while True:
     # if grad_clip != 0.0:
     #     scaler.unscale_(optimizer)
     #     torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)    
-    alpha = 1 / 20000000.0
+    alpha = 1 / 20000000.0 # divide by roughly the number of model parameters for the interpolation alpha
     with torch.no_grad():
         for param in model.parameters():
             # param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * (loss - param.grad * param.data) * param.grad / ( torch.norm(param.grad) ** 2 ), param.data)

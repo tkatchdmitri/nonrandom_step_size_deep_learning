@@ -1,3 +1,9 @@
+# Nonrandom Step Size Deep Learning
+
+What if the step size in deep learning wasn't random? What if, as usual, you took a linear approximation of the loss landscape, and then, instead of jumping a random amount according to a hand tuned learning rate, jumped the amount that you calculated would give you zero error should the linear approximation hold?
+
+That's exactly what we did. And it works.
+
 
 # nanoGPT
 

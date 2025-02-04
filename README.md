@@ -26,7 +26,7 @@ You can modify alpha which is the interpolating constant between the old and new
 
 ![redline_vs_adamw](https://github.com/user-attachments/assets/82854f8e-48f2-4a11-acd9-73854f48547a)
 
-## nanoGPT
+# nanoGPT
 
 ![nanoGPT](assets/nanogpt.jpg)
 

@@ -18,6 +18,15 @@ y = grad * x_new  + ( loss - grad * x_old ) (plug in our solution for b)
 x _new =  ( - loss + grad * x_old) / grad (solve for corresponding x parameter value)
 ```
 
+## Just Show Me The Code
+
+```py
+    alpha = 1 / 20000000.0 # divide by roughly the number of model parameters for the interpolation alpha
+    with torch.no_grad():
+        for param in model.parameters():
+            param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), param.data)
+```
+
 ## But How Do I Adjust the Learning Rate/Step Size?
 
 You can modify alpha which is the interpolating constant between the old and new parameters and defaults to ```1/2*number_of_parameters```.

@@ -8,7 +8,7 @@ That's exactly what we did. And it works.
 
 ![redline_vs_adamw](https://github.com/user-attachments/assets/82854f8e-48f2-4a11-acd9-73854f48547a)
 
-Computation For Green Point:
+## Computation For Green Point:
 
 ```
 y = mx + b (equation of a line)
@@ -19,6 +19,10 @@ y = grad * x_new  + ( loss - grad * x_old ) (plug in our solution for b)
 0 = grad * x_new + ( loss - grad * x_old ) (set new loss to zero)
 x _new =  ( - loss + grad * x_old) / grad (solve for corresponding x parameter value)
 ```
+
+## But How Do I Adjust the Learning Rate/Step Size?
+
+You can modify alpha which is the interpolating constant between the old and new parameters and defaults to ```1/2*number_of_parameters```.
 
 ## nanoGPT
 

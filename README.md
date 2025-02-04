@@ -6,8 +6,6 @@ That's exactly what we did. And it works.
 
 ![Tangent_to_a_curve svg](https://github.com/user-attachments/assets/479524b1-e077-444e-8238-b29e7c77f88e)
 
-![redline_vs_adamw](https://github.com/user-attachments/assets/82854f8e-48f2-4a11-acd9-73854f48547a)
-
 ## Computation For Green Point:
 
 ```
@@ -23,6 +21,10 @@ x _new =  ( - loss + grad * x_old) / grad (solve for corresponding x parameter v
 ## But How Do I Adjust the Learning Rate/Step Size?
 
 You can modify alpha which is the interpolating constant between the old and new parameters and defaults to ```1/2*number_of_parameters```.
+
+## Preliminary Results
+
+![redline_vs_adamw](https://github.com/user-attachments/assets/82854f8e-48f2-4a11-acd9-73854f48547a)
 
 ## nanoGPT
 

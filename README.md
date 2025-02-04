@@ -33,7 +33,7 @@ You can modify alpha which is the interpolating constant between the old and new
 
 ## Preliminary Results
 
-![redline_vs_adamw](https://github.com/user-attachments/assets/82854f8e-48f2-4a11-acd9-73854f48547a)
+![redline_vs_adamw](https://github.com/user-attachments/assets/bb3041de-a62a-4cca-a2eb-bbbc3a52710d)
 
 # nanoGPT
 

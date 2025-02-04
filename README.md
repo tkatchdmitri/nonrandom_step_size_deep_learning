@@ -8,6 +8,17 @@ That's exactly what we did. And it works.
 
 ![redline_vs_adamw](https://github.com/user-attachments/assets/82854f8e-48f2-4a11-acd9-73854f48547a)
 
+Computation For Green Point:
+
+```
+y = mx + b (equation of a line)
+loss = grad * x_old + b (rename variables closer to the code)
+b = loss - grad * x_old (solve for b in terms of other variables)
+y = grad * x_new + b 
+y = grad * x_new  + ( loss - grad * x_old ) (plug in our solution for b)
+0 = grad * x_new + ( loss - grad * x_old ) (set new loss to zero)
+x _new =  ( - loss + grad * x_old) / grad (solve for corresponding x parameter value)
+```
 
 ## nanoGPT
 

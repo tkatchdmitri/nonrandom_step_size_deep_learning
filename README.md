@@ -5,7 +5,7 @@ What if the step size in deep learning wasn't random? What if, as usual, you too
 That's exactly what we did. And it works.
 
 
-# nanoGPT
+## nanoGPT
 
 ![nanoGPT](assets/nanogpt.jpg)
 

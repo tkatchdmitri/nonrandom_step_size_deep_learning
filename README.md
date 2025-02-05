@@ -21,19 +21,18 @@ x _new =  ( - loss + grad * x_old) / grad (solve for corresponding x parameter v
 ## Just Show Me The Code
 
 ```py
-    alpha = 1 / 20000000.0 # divide by roughly the number of model parameters for the interpolation alpha
+    global_grad_squared_norm = 0.0
     with torch.no_grad():
-        for param in model.parameters():
-            param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), param.data)
+        for name, param in model.named_parameters():
+            global_grad_squared_norm += param.grad.data.pow(2).sum()
+    with torch.no_grad():
+        for name, param in model.named_parameters():
+            param.grad.data *= loss / global_grad_squared_norm
 ```
-
-## But How Do I Adjust the Learning Rate/Step Size?
-
-You can modify alpha which is the interpolating constant between the old and new parameters and defaults to ```1/2*number_of_parameters```.
 
 ## Preliminary Results
 
-![redline_vs_adamw](https://github.com/user-attachments/assets/bb3041de-a62a-4cca-a2eb-bbbc3a52710d)
+![zero_vs_adamw](https://github.com/user-attachments/assets/238fd3db-aa18-4dcf-b34e-f108845e8e47)
 
 # nanoGPT
 

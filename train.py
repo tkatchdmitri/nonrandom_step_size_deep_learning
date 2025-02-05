@@ -253,6 +253,8 @@ t0 = time.time()
 local_iter_num = 0 # number of iterations in the lifetime of this process
 raw_model = model.module if ddp else model # unwrap DDP container if needed
 running_mfu = -1.0
+perturbation = 0.01
+alpha = 1.0 / 20000000.0
 while True:
 
     # determine and set the learning rate for this iteration
@@ -311,12 +313,40 @@ while True:
     # if grad_clip != 0.0:
     #     scaler.unscale_(optimizer)
     #     torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)    
-    alpha = 1 / 20000000.0 # divide by roughly the number of model parameters for the interpolation alpha
+    # alpha = 1.0 / 20000000.0
+    # perturbation = 1.01
+    # alpha = 1.0 / 20000000.0 # divide by roughly the number of model parameters for the interpolation alpha
+    
+    # with torch.no_grad():
+    #     for param in model.parameters():
+    #         if param.requires_grad:
+    #             param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), param.data)
+    global_grad_squared_norm = 0.0
     with torch.no_grad():
-        for param in model.parameters():
+        for name, param in model.named_parameters():
+            global_grad_squared_norm += param.grad.data.pow(2).sum()
+    with torch.no_grad():
+        for name, param in model.named_parameters():
+            param.grad.data *= loss / global_grad_squared_norm
+            # pass
+
+            # param.grad.data = alpha * loss / (param.grad.data.pow(2).sum()) * param.grad.data
+
+
+    # torch.nn.utils.clip_grad_norm_(model.parameters(), 1000000000.0)
+            # if len(param.data.shape) == 1:
+            #     param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), param.data)
+            # else:
+            #     param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), (1+perturbation) * param.data)
+            # perturbation *= 0.999
+
             # param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * (loss - param.grad * param.data) * param.grad / ( torch.norm(param.grad) ** 2 ), param.data)
             # param.data = (loss - param.grad * param.data) * param.grad / ( torch.norm(param.grad) ** 2 )
-            param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), param.data)
+            
+            # param.data = torch.where( torch.abs(param.grad) > 1e-4, (1-alpha) * param.data + alpha * ( param.grad * param.data - loss ) / ( param.grad ), param.data * torch.abs(torch.normal(mean=1, std=0.2, size=param.grad.shape, device=device)))
+
+            # alpha *= 0.999
+            
             # A = param.grad
             # B = loss - param.grad * param.data
             # print('A', A.shape)
@@ -345,8 +375,8 @@ while True:
     #     scaler.unscale_(optimizer)
     #     torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip)
     # step the optimizer and scaler if training in fp16
-    # scaler.step(optimizer)
-    # scaler.update()
+    scaler.step(optimizer)
+    scaler.update()
     # flush the gradients as soon as we can, no need for this memory anymore
     optimizer.zero_grad(set_to_none=True)
 
@@ -361,7 +391,7 @@ while True:
         if local_iter_num >= 5: # let the training loop settle a bit
             mfu = raw_model.estimate_mfu(batch_size * gradient_accumulation_steps, dt)
             running_mfu = mfu if running_mfu == -1.0 else 0.9*running_mfu + 0.1*mfu
-        print(f"iter {iter_num}: loss {lossf:.4f}, time {dt*1000:.2f}ms, mfu {running_mfu*100:.2f}%")
+        # print(f"iter {iter_num}: loss {lossf:.4f}, time {dt*1000:.2f}ms, mfu {running_mfu*100:.2f}%")
     iter_num += 1
     local_iter_num += 1
 

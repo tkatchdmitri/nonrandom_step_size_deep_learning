@@ -4,6 +4,8 @@ What if the step size in deep learning wasn't random? What if, as usual, you too
 
 That's exactly what we did. And it works.
 
+Howevver, in high dimensinoal spaces this feels like it isn't doing enough. Fixing the jump size only loses one degree of freedom, thereby going from n to n-1 degrees of freedom. What if instead of merely rescaling the grad matrix by a scalar, it was rescaled by a matrix? To accomplish this we note that we want stable solutions where not only is the loss zero, but also the gradients are zero. To this end, we add the square of the gradients to the loss.
+
 ![Tangent_to_a_curve svg](https://github.com/user-attachments/assets/479524b1-e077-444e-8238-b29e7c77f88e)
 
 ## Computation For Green Point:

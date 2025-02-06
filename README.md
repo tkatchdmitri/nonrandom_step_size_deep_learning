@@ -27,7 +27,8 @@ x _new =  ( - loss + grad * x_old) / grad (solve for corresponding x parameter v
             global_grad_squared_norm += param.grad.data.pow(2).sum()
     with torch.no_grad():
         for name, param in model.named_parameters():
-            param.grad.data *= loss / global_grad_squared_norm
+            total_loss = loss + param.grad.data.pow(2)
+            param.grad.data *= total_loss / global_grad_squared_norm
 ```
 
 ## Preliminary Results

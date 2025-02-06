@@ -33,8 +33,6 @@ x _new =  ( - loss + grad * x_old) / grad (solve for corresponding x parameter v
 
 ## Preliminary Results
 
-![zero_vs_adamw](https://github.com/user-attachments/assets/238fd3db-aa18-4dcf-b34e-f108845e8e47)
-
 ![zero_vs_adamw](https://github.com/user-attachments/assets/1b29470e-674a-4221-9d22-aa230523a128)
 
 
